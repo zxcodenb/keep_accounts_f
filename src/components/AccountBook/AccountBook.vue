@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="16">
-      <el-card class="box-card">
+  <el-card class="box-card overview-card">
         <template #header>
           <div class="card-header">
             <span>财务概览</span>
@@ -69,14 +69,14 @@
           </div>
         </template>
         <el-table 
-          :data="paginatedRecords"
-          :default-sort="{ prop: 'date', order: 'descending' }"
+          :data="records"
+          :default-sort="{ prop: 'recordDate', order: 'descending' }"
           style="width: 100%"
         >
           <el-table-column prop="type" label="类型" width="100">
             <template #default="scope">
-              <el-tag :type="scope.row.type === 1 ? 'success' : 'danger'">
-                {{ scope.row.type === 1 ? '收入' : '支出' }}
+              <el-tag :type="scope.row.type === '1' ? 'success' : 'danger'">
+                {{ scope.row.type === '1' ? '收入' : '支出' }}
               </el-tag>
             </template>
           </el-table-column>
@@ -139,31 +139,31 @@
         <el-form :model="newRecord" ref="recordForm" label-width="80px">
           <el-form-item label="类型" prop="type">
             <el-radio-group v-model="newRecord.type">
-              <el-radio :label="0">支出</el-radio>
-              <el-radio :label="1">收入</el-radio>
+              <el-radio label="0">支出</el-radio>
+              <el-radio label="1">收入</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="分类" prop="category">
             <el-select 
               v-model="newRecord.category"
-              :placeholder="newRecord.type === 1 ? '选择收入分类' : '选择支出分类'"
+              :placeholder="newRecord.type === '1' ? '选择收入分类' : '选择支出分类'"
               style="width: 100%"
             >
               <el-option
-                v-for="item in (newRecord.type === 1 ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)"
+                v-for="item in (newRecord.type === '1' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
               />
             </el-select>
           </el-form-item>
-          <el-form-item :label="newRecord.type === 1 ? '收入描述' : '支出描述'" prop="description">
+          <el-form-item :label="newRecord.type === '1' ? '收入描述' : '支出描述'" prop="description">
             <el-input 
               v-model="newRecord.description" 
-              :placeholder="newRecord.type === 1 ? '例如：月度工资' : '例如：午餐费用'"
+              :placeholder="newRecord.type === '1' ? '例如：月度工资' : '例如：午餐费用'"
             />
           </el-form-item>
-          <el-form-item :label="newRecord.type === 1 ? '收入金额' : '支出金额'" prop="amount">
+          <el-form-item :label="newRecord.type === '1' ? '收入金额' : '支出金额'" prop="amount">
             <el-input-number v-model="newRecord.amount" :precision="2" :step="10" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="时间" prop="recordDate">
@@ -184,7 +184,7 @@
               :loading="loading"
               :disabled="loading"
             >
-              {{ newRecord.type === 1 ? '添加收入' : '添加支出' }}
+              {{ newRecord.type === '1' ? '添加收入' : '添加支出' }}
             </el-button>
           </el-form-item>
         </el-form>
@@ -197,31 +197,31 @@
     <el-form :model="updateForm" ref="updateFormRef" label-width="80px">
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="updateForm.type">
-          <el-radio :label="0">支出</el-radio>
-          <el-radio :label="1">收入</el-radio>
+          <el-radio label="0">支出</el-radio>
+          <el-radio label="1">收入</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="分类" prop="category">
         <el-select 
           v-model="updateForm.category"
-          :placeholder="updateForm.type === 1 ? '选择收入分类' : '选择支出分类'"
+          :placeholder="updateForm.type === '1' ? '选择收入分类' : '选择支出分类'"
           style="width: 100%"
         >
           <el-option
-            v-for="item in (updateForm.type === 1 ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)"
+            v-for="item in (updateForm.type === '1' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item :label="updateForm.type === 1 ? '收入描述' : '支出描述'" prop="description">
+  <el-form-item :label="updateForm.type === '1' ? '收入描述' : '支出描述'" prop="description">
         <el-input 
           v-model="updateForm.description" 
-          :placeholder="updateForm.type === 1 ? '例如：月度工资' : '例如：午餐费用'"
+          :placeholder="updateForm.type === '1' ? '例如：月度工资' : '例如：午餐费用'"
         />
       </el-form-item>
-      <el-form-item :label="updateForm.type === 1 ? '收入金额' : '支出金额'" prop="amount">
+  <el-form-item :label="updateForm.type === '1' ? '收入金额' : '支出金额'" prop="amount">
         <el-input-number v-model="updateForm.amount" :precision="2" :step="10" :min="0"></el-input-number>
       </el-form-item>
       <el-form-item label="时间" prop="date">
@@ -250,7 +250,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { accountApi } from '@/api/account';
 
-// 收支分类常量
+// 支出分类常量
 const EXPENSE_CATEGORIES = [
   { value: 'FOOD', label: '餐饮' },
   { value: 'TRANSPORT', label: '交通' },
@@ -325,7 +325,7 @@ const handleApiError = (error) => {
 
 // 获取分类标签
 const getCategoryLabel = (categoryValue, type) => {
-  const categories = type === 1 ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  const categories = type === '1' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
   const category = categories.find(c => c.value === categoryValue);
   return category ? category.label : '其他';
 };
@@ -349,14 +349,14 @@ const remainingBalance = computed(() => {
 
 // 筛选后的记录
 const filteredRecords = computed(() => {
-  // 先按月份筛选
-  const monthFiltered = records.value.filter(record => isInSelectedMonth(record.date));
+  // 先按月份筛选（后端返回的字段为 recordDate）
+  const monthFiltered = records.value.filter(record => isInSelectedMonth(record.recordDate));
   
-  // 再按类型筛选
+  // 再按类型筛选（后端 type 为字符串 '0'/'1'）
   if (filterType.value === -1) {
     return monthFiltered;
   }
-  return monthFiltered.filter(record => record.type === filterType.value);
+  return monthFiltered.filter(record => record.type === String(filterType.value));
 });
 
 // 月度统计
@@ -455,8 +455,8 @@ const disableFutureDate = (time) => {
 const fetchRecords = async () => {
   try {
     const params = {
-      page: currentPage.value - 1,  // 后端页码从0开始
-      size: pageSize.value
+      pageNum: currentPage.value,  // 页码从1开始
+      pageSize: pageSize.value
     };
 
     // 如果选择了收入或支出类型
@@ -472,14 +472,16 @@ const fetchRecords = async () => {
     }
 
     const response = await accountApi.getRecords(params);
-    if (response.data.code === 200) {
-      records.value = response.data.rows;  // 使用 rows 字段获取数据列表
-      total.value = response.data.total;   // 使用 total 字段获取总数
+  if (response && response.code === 200) {
+      records.value = response.rows.map(record => ({
+        ...record,
+        amount: Number(record.amount).toFixed(2) // 确保金额格式正确
+      }));
+      total.value = response.total;
     } else {
-      // 如果返回的 code 不是 200，显示错误信息
       ElMessage({
         type: 'error',
-        message: response.data.msg || '获取数据失败'
+        message: (response && response.msg) || '获取数据失败'
       });
     }
   } catch (error) {
@@ -549,10 +551,10 @@ const deleteRecord = (index) => {
   }).then(async () => {
     try {
       const response = await accountApi.deleteRecord(record.id);
-      if (response.data.code === 200) {
+  if (response && response.code === 200) {
         ElMessage({
           type: 'success',
-          message: response.data.msg || '删除成功'
+          message: response.msg || '删除成功'
         });
         
         // 删除成功后重新获取当前页数据
@@ -566,7 +568,7 @@ const deleteRecord = (index) => {
       } else {
         ElMessage({
           type: 'error',
-          message: response.data.msg || '删除失败'
+          message: (response && response.msg) || '删除失败'
         });
       }
     } catch (error) {
@@ -602,10 +604,10 @@ const confirmUpdate = async () => {
       amount: Number(updateForm.value.amount).toFixed(2) // 确保金额格式正确
     });
 
-    if (response.data.code === 200) {
+  if (response && response.code === 200) {
       ElMessage({
         type: 'success',
-        message: response.data.msg || '更新成功'
+        message: response.msg || '更新成功'
       });
       updateDialogVisible.value = false;
       // 更新成功后重新获取数据
@@ -613,7 +615,7 @@ const confirmUpdate = async () => {
     } else {
       ElMessage({
         type: 'error',
-        message: response.data.msg || '更新失败'
+        message: (response && response.msg) || '更新失败'
       });
     }
   } catch (error) {
@@ -656,18 +658,18 @@ const addRecord = async () => {
     // 发送POST请求
     const response = await accountApi.addRecord(recordData);
     
-    if (response.data.code === 200) {
+  if (response && response.code === 200) {
       // 添加成功后刷新列表数据
       await fetchRecords();
       
       ElMessage({
-        message: response.data.msg || `${newRecord.value.type === '1' ? '收入' : '支出'}添加成功`,
+        message: response.msg || `${newRecord.value.type === '1' ? '收入' : '支出'}添加成功`,
         type: 'success',
       });
     } else {
       ElMessage({
         type: 'error',
-        message: response.data.msg || '添加失败'
+        message: (response && response.msg) || '添加失败'
       });
       return; // 如果添加失败，不重置表单
     }
@@ -685,7 +687,7 @@ const addRecord = async () => {
     currentPage.value = 1;
     
     ElMessage({
-      message: `${newRecord.value.type === 1 ? '收入' : '支出'}添加成功`,
+      message: `${newRecord.value.type === '1' ? '收入' : '支出'}添加成功`,
       type: 'success',
     });
   } catch (error) {
@@ -710,6 +712,16 @@ const addRecord = async () => {
 .box-card {
   margin-bottom: 20px;
   height: 100%;
+}
+
+.overview-card {
+  height: 220px; /* 固定高度，可根据需要调整 */
+  overflow: hidden;
+}
+
+.overview-card .el-card__body {
+  height: 100%;
+  overflow: auto; /* 内部滚动，避免卡片被拉长 */
 }
 
 .card-header {
