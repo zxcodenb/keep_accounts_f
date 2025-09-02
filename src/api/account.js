@@ -21,3 +21,13 @@ export const accountApi = {
     return api.delete(`/account_records/${id}`)
   }
 }
+
+export const aiApi = {
+  // 发送消息并以 SSE 流式接收
+  streamChat(message) {
+    const url = `/stream?msg=${encodeURIComponent(message || '')}`
+    // 返回 EventSource 以便组件自行监听
+    const fullUrl = `${api.defaults.baseURL}${url}`
+    return new EventSource(fullUrl)
+  }
+}

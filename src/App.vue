@@ -20,6 +20,10 @@
           <el-icon><Aim /></el-icon>
           <template #title>存款目标</template>
         </el-menu-item>
+        <el-menu-item index="/ai-chat">
+          <el-icon><ChatSquare /></el-icon>
+          <template #title>AI 对话</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -33,7 +37,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Money, Aim, ArrowRight } from '@element-plus/icons-vue'
+import { Money, Aim, ArrowRight, ChatSquare } from '@element-plus/icons-vue'
 
 const isCollapse = ref(false)
 </script>
